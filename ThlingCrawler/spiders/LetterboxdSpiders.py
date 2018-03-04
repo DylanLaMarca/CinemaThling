@@ -4,7 +4,8 @@
 # https://letterboxd.com/dylanlamarca/watchlist/
 
 import scrapy
-import Movie
+from ThlingCrawler import Movie
+
 
 class WatchlistSpider(scrapy.Spider):
     name = "watchlist"
@@ -13,6 +14,7 @@ class WatchlistSpider(scrapy.Spider):
         urls = [
             'https://letterboxd.com/dylanlamarca/watchlist/'
         ]
+        print urls
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -22,6 +24,6 @@ class WatchlistSpider(scrapy.Spider):
         unicode_urls = poster_list.css('div.poster').xpath('@data-film-slug').extract()
         for count in range (0, len(unicode_titles)):
             title = unicode_titles[count].encode('utf-8')
-            url = unicode_urls[count].encode('utf-8')
-            movie = Movie.Movie(title=title,letterboxd_url=url)
+            url = 'http://letterboxd.com' + unicode_urls[count].encode('utf-8')
+            movie = Movie.Movie(title=title, letterboxd_url=url)
             yield movie

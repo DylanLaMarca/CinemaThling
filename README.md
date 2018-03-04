@@ -1,2 +1,2 @@
 # CinemaThling
-A Deluge plugin to automatically torrent the movies from one's to-watch-list on Letterboxd.com
+A Deluge plugin that communicates with one's to-watch-list on Letterboxd.com

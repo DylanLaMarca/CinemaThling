@@ -14,16 +14,16 @@ class WatchlistSpider(scrapy.Spider):
         urls = [
             'https://letterboxd.com/dylanlamarca/watchlist/'
         ]
-        print urls
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
         poster_list = response.css('li.poster-container')
         unicode_titles = poster_list.css('img.image').xpath('@alt').extract()
-        unicode_urls = poster_list.css('div.poster').xpath('@data-film-slug').extract()
+        unicode_slugs = poster_list.css('div.poster').xpath('@data-film-slug').extract()
+
         for count in range (0, len(unicode_titles)):
             title = unicode_titles[count].encode('utf-8')
-            url = 'http://letterboxd.com' + unicode_urls[count].encode('utf-8')
-            movie = Movie.Movie(title=title, letterboxd_url=url)
+            slug = unicode_slugs[count].encode('utf-8')
+            movie = Movie.Movie(title=title, slug=slug)
             yield movie

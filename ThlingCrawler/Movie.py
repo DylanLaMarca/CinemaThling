@@ -2,4 +2,8 @@ import scrapy
 
 class Movie(scrapy.Item):
     title = scrapy.Field()
-    letterboxd_url = scrapy.Field()
+    slug = scrapy.Field()
+    year = scrapy.Field()
+
+class MovieList(scrapy.Item):
+    movies = scrapy.Field()

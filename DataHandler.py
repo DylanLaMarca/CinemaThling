@@ -6,23 +6,22 @@ from ThlingCrawler import Movie
 class MovieDataBase:
     DATABASE_DIR = "Movies.db"
 
-    def __init__(self):
-        connection = self.connect()
-        self.disconnect(connection)
-
-    def connect(self):
-        new = not os.path.isfile(self.DATABASE_DIR)
-        connection = sqlite3.connect(self.DATABASE_DIR)
+    @staticmethod
+    def connect():
+        new = not os.path.isfile(MovieDataBase.DATABASE_DIR)
+        connection = sqlite3.connect(MovieDataBase.DATABASE_DIR)
         if new:
             cursor = connection.cursor()
-            self.create_tables(cursor)
+            MovieDataBase.create_tables(cursor)
         return connection
 
-    def disconnect(self, connection):
+    @staticmethod
+    def disconnect( connection):
         connection.commit()
         connection.close()
 
-    def create_tables(self, cursor):
+    @staticmethod
+    def create_tables( cursor):
         new_table = """
             CREATE TABLE new ( 
             title VARCHAR(50), 
@@ -51,36 +50,40 @@ class MovieDataBase:
         """
         cursor.execute(downloaded_table)
 
-    def add_command(self,cursor, title, slug, year, date):
-        if slug not in self.get_slugs('new'):
+    @staticmethod
+    def add_command(cursor, title, slug, year, date):
+        if slug not in MovieDataBase.get_slugs('new'):
             print 'INSERTING {} [{}] INTO new...'.format(title, slug)
             add_command = """INSERT INTO new VALUES ("{}", "{}", {}, "{}");""".format(title, slug, year, date)
             cursor.execute(add_command)
         else:
             print 'Already in new...'
 
-    def add_to_new(self, movie):
-        today = self.get_date()
-        connection = self.connect()
+    @staticmethod
+    def add_to_new( movie):
+        today = MovieDataBase.get_date()
+        connection = MovieDataBase.connect()
         cursor = connection.cursor()
         title = movie.get('title')
         slug = movie.get('slug')
         year = movie.get('year')
         if year == None:
             year = 0000
-        self.add_command(cursor, title, slug, year, today)
-        self.disconnect(connection)
+        MovieDataBase.add_command(cursor, title, slug, year, today)
+        MovieDataBase.disconnect(connection)
 
-    def get_date(self):
+    @staticmethod
+    def get_date():
         current = datetime.datetime.now()
         return "{}-{}-{}".format(current.year, current.month, current.day)
 
-    def get_slugs(self, table):
-        connection = self.connect();
+    @staticmethod
+    def get_slugs(table):
+        connection = MovieDataBase.connect();
         cursor = connection.cursor()
         command = """SELECT slug FROM {};""".format(table)
         raw_slugs = cursor.execute(command).fetchall()
-        self.disconnect(connection)
+        MovieDataBase.disconnect(connection)
         slugs = range(len(raw_slugs))
         for count in range(len(raw_slugs)):
             slugs[count] = raw_slugs[count][0].encode('utf-8')

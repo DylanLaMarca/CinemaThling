@@ -1,8 +1,7 @@
 from ThlingCrawler import Movie
-import DataHandler
+from DataHandler import MovieDataBase as data
 
 class MoviePipe(object):
     def process_item(self, item, spider):
-        database = DataHandler.MovieDataBase()
-        database.add_to_new(item)
+        data.add_to_new(item)
         return item
